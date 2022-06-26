@@ -7,3 +7,4 @@
 # Unnecesary Builds and Debug
 cmd/mlbwlist/**/*
 !cmd/mlbwlist/main.go
+!cmd/mlbwlist/mlbwlist.db
