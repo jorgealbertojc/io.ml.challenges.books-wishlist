@@ -1,0 +1,9 @@
+
+
+
+# Unnecesary Debug Configurations
+.vscode
+
+# Unnecesary Builds and Debug
+cmd/mlbwlist/**/*
+!cmd/mlbwlist/main.go

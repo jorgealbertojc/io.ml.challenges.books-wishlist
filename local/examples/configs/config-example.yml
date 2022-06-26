@@ -1,0 +1,12 @@
+---
+app:
+  configversion: 1.0
+  port: 8084
+  host: 0.0.0.0
+
+database:
+  host: 127.0.0.1
+  port: 3306
+
+gsuite:
+  api: http://localhost
