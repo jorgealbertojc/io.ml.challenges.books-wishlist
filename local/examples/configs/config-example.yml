@@ -7,7 +7,7 @@ app:
 
 database:
   type: "sqlite3"
-  filepath: "/var/local/mlbwlist/database.db"
+  filepath: "/media/local/storage/Workspace/bbva/src/io.ml.challenges/io.ml.challenges.books-wishlist/cmd/mlbwlist/mlbwlist.db"
 
 gsuite:
   api: "http://localhost"

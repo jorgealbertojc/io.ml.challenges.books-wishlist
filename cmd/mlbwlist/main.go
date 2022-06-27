@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models/config"
+	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
+	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/server"
 )
 
 const (
@@ -43,7 +45,7 @@ func main() {
 	}
 }
 
-func ReadConfig() config.Config {
+func ReadConfig() models.Config {
 
 	configfilepath := viper.GetString(configFilepathFlag)
 	configfilename := getFilenameFromFilepath(configfilepath)
@@ -75,7 +77,7 @@ func ReadConfig() config.Config {
 		os.Exit(2)
 	}
 
-	appconfig := config.Config{}
+	appconfig := models.Config{}
 	_ = viper.Unmarshal(&appconfig)
 
 	appconfig.UUID = uuid.New().String()
@@ -108,6 +110,15 @@ func StartServer(_ *cobra.Command, _ []string) {
 		configJSON, _ := json.MarshalIndent(config, "", "    ")
 		fmt.Println(string(configJSON))
 	}
+
+	serve := server.New(&config)
+	err := serve.Configure()
+	if err != nil {
+		fmt.Println("ERROR: cannot configure server paths and endpoints")
+		os.Exit(3)
+	}
+
+	log.Fatal(serve.Run())
 }
 
 func getFilenameFromFilepath(filepath string) string {
