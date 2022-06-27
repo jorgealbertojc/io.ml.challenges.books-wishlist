@@ -13,6 +13,7 @@ import (
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/commons/logging"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/books"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/search"
+	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/signin"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/users"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/wishlist"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
@@ -31,6 +32,7 @@ type serve struct {
 	db *sql.DB
 
 	userLogic     users.Logic
+	signinLogic   signin.Logic
 	wishlistLogic wishlist.Logic
 	booksLogic    books.Logic
 	searchLogic   search.Logic
@@ -48,16 +50,12 @@ func New(config *models.Config) Server {
 		os.Exit(4)
 	}
 
-	userLogic := users.New(config, logging, database)
-
 	server := serve{
 		config:  config,
 		router:  router,
 		logging: logging,
 
 		db: database,
-
-		userLogic: userLogic,
 	}
 
 	return &server
@@ -65,8 +63,11 @@ func New(config *models.Config) Server {
 
 func (s *serve) Configure() error {
 
-	s.setupUsersEndpoints()
 	s.setupDefaultErrorHandlers()
+	s.configureServiceLogistics()
+	s.configureServiceEndpoints()
+
+	s.printServiceEndpoints()
 
 	return nil
 }
@@ -88,4 +89,10 @@ func (s *serve) httpServiceErrorManagement(w http.ResponseWriter, message string
 	}
 	s.logging.Error(message)
 	json.NewEncoder(w).Encode(errors)
+}
+
+func (s *serve) configureServiceLogistics() {
+
+	s.userLogic = users.New(s.config, s.logging, s.db)
+	s.signinLogic = signin.New(s.config, s.logging, s.db)
 }
