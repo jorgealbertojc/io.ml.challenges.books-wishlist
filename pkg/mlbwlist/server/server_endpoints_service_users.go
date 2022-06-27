@@ -8,12 +8,12 @@ import (
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
-func (s *serve) setupUsersEndpoints() {
+func (s *serve) configureUsersServiceEndpoints() {
 
-	userspath := fmt.Sprintf("%s%s", apiversion, userAccountsEndpointPath)
-	s.logging.Info("exposing [%s] %s", http.MethodPost, userspath)
-	s.router.HandleFunc(userspath, s.manageCreateUserAccount).
-		Methods(http.MethodPost)
+	endpointPath := fmt.Sprintf("%s%s", apiversion, userAccountsEndpointPath)
+	method := http.MethodPost
+	s.router.HandleFunc(endpointPath, s.manageCreateUserAccount).
+		Methods(method)
 }
 
 func (s *serve) manageCreateUserAccount(w http.ResponseWriter, r *http.Request) {
@@ -25,5 +25,6 @@ func (s *serve) manageCreateUserAccount(w http.ResponseWriter, r *http.Request) 
 		s.httpServiceErrorManagement(w, err.Error())
 		return
 	}
+
 	json.NewEncoder(w).Encode(model)
 }
