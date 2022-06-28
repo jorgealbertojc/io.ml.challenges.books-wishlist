@@ -2,7 +2,6 @@ package server
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -85,19 +84,8 @@ func (s *serve) Configure() error {
 func (s *serve) Run() error {
 
 	address := fmt.Sprintf("%s:%d", s.config.Application.AppService.Host, s.config.Application.AppService.Port)
-	s.logging.Info("server has starting serve at address: %s", address)
+	s.logging.Info("Server start service at address: %s", address)
 	return http.ListenAndServe(address, s.router)
-}
-
-func (s *serve) httpServiceErrorManagement(w http.ResponseWriter, message string) {
-	errors := models.ServerError{}
-	errors.Status = http.StatusBadRequest
-	errors.Spec = models.ServerErrorSpec{
-		Type:   "Error",
-		Reason: message,
-	}
-	s.logging.Error(message)
-	json.NewEncoder(w).Encode(errors)
 }
 
 func (s *serve) configureServiceLogistics() {

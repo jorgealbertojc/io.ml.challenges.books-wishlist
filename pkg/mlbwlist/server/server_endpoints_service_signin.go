@@ -26,7 +26,5 @@ func (s *serve) manageCreateSigninTokenRequest(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json;charset=utf-8")
-
-	json.NewEncoder(w).Encode(model)
+	s.httpJsonResponseManagement(w, model, http.StatusOK)
 }

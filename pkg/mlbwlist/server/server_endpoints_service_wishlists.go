@@ -35,9 +35,7 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json;charset=utf-8")
-
-	json.NewEncoder(w).Encode(model)
+	s.httpJsonResponseManagement(w, model, http.StatusOK)
 }
 
 func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +47,5 @@ func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json;charset=utf-8")
-
-	json.NewEncoder(w).Encode(list)
+	s.httpJsonResponseManagement(w, list, http.StatusOK)
 }
