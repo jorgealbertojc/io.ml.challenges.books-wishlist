@@ -12,11 +12,15 @@ import (
 func (s *serve) configureBooksServiceEndpoints() {
 
 	createBookEndpointPath := fmt.Sprintf("%s%s", apiversion, booksEndpointPath)
-	s.router.HandleFunc(createBookEndpointPath, s.manageCreateBookRequest).
+	s.router.HandleFunc(createBookEndpointPath, s.manageCreateWishlistBookRequest).
 		Methods(http.MethodPost)
+
+	listWishlistBooksEndpointPath := fmt.Sprintf("%s%s", apiversion, booksEndpointPath)
+	s.router.HandleFunc(listWishlistBooksEndpointPath, s.manageListWishlistBooksRequest).
+		Methods(http.MethodGet)
 }
 
-func (s *serve) manageCreateBookRequest(w http.ResponseWriter, r *http.Request) {
+func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
 
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
@@ -32,4 +36,20 @@ func (s *serve) manageCreateBookRequest(w http.ResponseWriter, r *http.Request) 
 	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 
 	json.NewEncoder(w).Encode(model)
+}
+
+func (s *serve) manageListWishlistBooksRequest(w http.ResponseWriter, r *http.Request) {
+
+	muxvars := mux.Vars(r)
+	userid := muxvars["user"]
+	wishlistid := muxvars["wishlist"]
+	list, err := s.booksLogic.List(userid, wishlistid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error())
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json;charset=utf-8")
+
+	json.NewEncoder(w).Encode(list)
 }
