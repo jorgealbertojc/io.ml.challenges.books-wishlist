@@ -10,6 +10,7 @@ import (
 type Logic interface {
 	Create(userid string, wislistid string, bookModel models.Books) (*models.Books, error)
 	List(userid string, wishlistid string) ([]models.Books, error)
+	Read(userid string, wishlistid string, bookid string) (*models.Books, error)
 }
 
 type logic struct {
