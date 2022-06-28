@@ -76,7 +76,6 @@ func (s *serve) Run() error {
 
 	address := fmt.Sprintf("%s:%d", s.config.Application.AppService.Host, s.config.Application.AppService.Port)
 	s.logging.Info("server has starting serve at address: %s", address)
-	http.Handle("/", s.router)
 	return http.ListenAndServe(address, s.router)
 }
 
@@ -95,4 +94,5 @@ func (s *serve) configureServiceLogistics() {
 
 	s.userLogic = users.New(s.config, s.logging, s.db)
 	s.signinLogic = signin.New(s.config, s.logging, s.db)
+	s.wishlistLogic = wishlist.New(s.config, s.logging, s.db)
 }

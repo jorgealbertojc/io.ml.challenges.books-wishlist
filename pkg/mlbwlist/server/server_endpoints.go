@@ -8,6 +8,7 @@ func (s *serve) configureServiceEndpoints() error {
 
 	s.configureUsersServiceEndpoints()
 	s.configureSigninServiceEndpoint()
+	s.configureWishlistsServiceEndpoints()
 
 	return nil
 }

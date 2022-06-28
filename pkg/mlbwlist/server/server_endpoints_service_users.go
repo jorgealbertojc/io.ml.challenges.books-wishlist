@@ -12,11 +12,11 @@ func (s *serve) configureUsersServiceEndpoints() {
 
 	endpointPath := fmt.Sprintf("%s%s", apiversion, userAccountsEndpointPath)
 	method := http.MethodPost
-	s.router.HandleFunc(endpointPath, s.manageCreateUserAccount).
+	s.router.HandleFunc(endpointPath, s.manageCreateUserAccountRequest).
 		Methods(method)
 }
 
-func (s *serve) manageCreateUserAccount(w http.ResponseWriter, r *http.Request) {
+func (s *serve) manageCreateUserAccountRequest(w http.ResponseWriter, r *http.Request) {
 
 	userAccountModel := models.UserAccount{}
 	json.NewDecoder(r.Body).Decode(&userAccountModel)
@@ -25,6 +25,8 @@ func (s *serve) manageCreateUserAccount(w http.ResponseWriter, r *http.Request) 
 		s.httpServiceErrorManagement(w, err.Error())
 		return
 	}
+
+	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 
 	json.NewEncoder(w).Encode(model)
 }

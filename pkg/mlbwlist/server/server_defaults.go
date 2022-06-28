@@ -22,7 +22,8 @@ func (s *serve) setupDefaultNotFoundErrorHandler() http.Handler {
 			Reason: fmt.Sprintf("Route {[%s] %s} was not found in server paths", r.Method, r.URL.Path),
 		}
 		w.WriteHeader(http.StatusNotFound)
-		w.Header().Add("Content-Type", "application/json")
+		w.Header().Add("Content-Type", "application/json;charset=utf-8")
+
 		s.logging.Error("server has not found route %s", r.URL.Path)
 		json.NewEncoder(w).Encode(httperror)
 	})

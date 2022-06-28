@@ -20,11 +20,13 @@ func (s *serve) manageCreateSigninTokenRequest(w http.ResponseWriter, r *http.Re
 
 	userAccountModel := models.UserAccount{}
 	json.NewDecoder(r.Body).Decode(&userAccountModel)
-	err := s.signinLogic.Create(userAccountModel)
+	model, err := s.signinLogic.Create(userAccountModel)
 	if err != nil {
 		s.httpServiceErrorManagement(w, err.Error())
 		return
 	}
 
-	json.NewEncoder(w).Encode(userAccountModel)
+	w.Header().Add("Content-Type", "application/json;charset=utf-8")
+
+	json.NewEncoder(w).Encode(model)
 }
