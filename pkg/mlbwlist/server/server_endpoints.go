@@ -10,6 +10,7 @@ func (s *serve) configureServiceEndpoints() error {
 	s.configureSigninServiceEndpoint()
 	s.configureWishlistsServiceEndpoints()
 	s.configureBooksServiceEndpoints()
+	s.configureSearchBookServiceEndpoints()
 
 	return nil
 }
