@@ -105,7 +105,7 @@ func (s *serve) configureServiceLogistics() {
 	s.userLogic = userslogic.New(s.config, s.logging, s.db)
 	s.signinLogic = signinlogic.New(s.config, s.logging, s.db)
 	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.db)
-	s.booksLogic = wishlistlogic.New(s.config, s.logging, s.db)
+	s.booksLogic = bookslogic.New(s.config, s.logging, s.db)
 }
 
 func (s *serve) configureServiceDBConnectors() {

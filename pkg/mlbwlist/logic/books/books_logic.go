@@ -8,6 +8,7 @@ import (
 )
 
 type Logic interface {
+	Create(userid string, wislistid string, bookModel models.Books) (*models.Books, error)
 }
 
 type logic struct {
