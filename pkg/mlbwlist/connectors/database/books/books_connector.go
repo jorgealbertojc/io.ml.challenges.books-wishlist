@@ -7,6 +7,9 @@ import (
 )
 
 type Connector interface {
+	Insert(userid string, wishlistid string, book models.Books) error
+	Select(userid string, wishlistid string, bookid string) (*models.Books, error)
+	List(userid string, wishlistid string) (*models.BooksList, error)
 }
 
 type connector struct {

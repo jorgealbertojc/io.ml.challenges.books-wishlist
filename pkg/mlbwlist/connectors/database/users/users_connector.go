@@ -7,6 +7,8 @@ import (
 )
 
 type Connector interface {
+	Insert(userAccountModel models.UserAccount) error
+	Select(userid string) (*models.UserAccount, error)
 }
 
 type connector struct {
