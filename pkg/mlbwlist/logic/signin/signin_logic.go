@@ -8,7 +8,7 @@ import (
 )
 
 type Logic interface {
-	Create(userAccountModel models.UserAccount) error
+	Create(userAccountModel models.UserAccount) (*models.Signin, error)
 }
 
 type logic struct {
