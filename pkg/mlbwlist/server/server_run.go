@@ -11,11 +11,15 @@ import (
 
 	"github.com/gorilla/mux"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/commons/logging"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/books"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/search"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/signin"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/users"
-	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/wishlist"
+	booksconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/books"
+	signinconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/signin"
+	usersconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/users"
+	wishlistconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/wishlist"
+	bookslogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/books"
+	searchlogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/search"
+	signinlogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/signin"
+	userslogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/users"
+	wishlistlogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/wishlist"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
@@ -31,11 +35,16 @@ type serve struct {
 
 	db *sql.DB
 
-	userLogic     users.Logic
-	signinLogic   signin.Logic
-	wishlistLogic wishlist.Logic
-	booksLogic    books.Logic
-	searchLogic   search.Logic
+	userLogic     userslogic.Logic
+	signinLogic   signinlogic.Logic
+	wishlistLogic wishlistlogic.Logic
+	booksLogic    bookslogic.Logic
+	searchLogic   searchlogic.Logic
+
+	userDB     usersconnector.Connector
+	signinDB   signinconnector.Connector
+	wishlistDB wishlistconnector.Connector
+	booksDB    booksconnector.Connector
 }
 
 func New(config *models.Config) Server {
@@ -65,6 +74,7 @@ func (s *serve) Configure() error {
 
 	s.setupDefaultErrorHandlers()
 	s.configureServiceLogistics()
+	s.configureServiceDBConnectors()
 	s.configureServiceEndpoints()
 
 	s.printServiceEndpoints()
@@ -92,7 +102,16 @@ func (s *serve) httpServiceErrorManagement(w http.ResponseWriter, message string
 
 func (s *serve) configureServiceLogistics() {
 
-	s.userLogic = users.New(s.config, s.logging, s.db)
-	s.signinLogic = signin.New(s.config, s.logging, s.db)
-	s.wishlistLogic = wishlist.New(s.config, s.logging, s.db)
+	s.userLogic = userslogic.New(s.config, s.logging, s.db)
+	s.signinLogic = signinlogic.New(s.config, s.logging, s.db)
+	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.db)
+	s.booksLogic = wishlistlogic.New(s.config, s.logging, s.db)
+}
+
+func (s *serve) configureServiceDBConnectors() {
+
+	s.userDB = usersconnector.New(s.config, s.db)
+	s.signinDB = signinconnector.New(s.config, s.db)
+	s.wishlistDB = wishlistconnector.New(s.config, s.db)
+	s.booksDB = booksconnector.New(s.config, s.db)
 }

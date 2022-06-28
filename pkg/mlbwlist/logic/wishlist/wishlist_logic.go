@@ -9,6 +9,7 @@ import (
 
 type Logic interface {
 	Create(wishlistModel models.Wishlist) (*models.Wishlist, error)
+	List(userid string) ([]models.Wishlist, error)
 }
 
 type logic struct {

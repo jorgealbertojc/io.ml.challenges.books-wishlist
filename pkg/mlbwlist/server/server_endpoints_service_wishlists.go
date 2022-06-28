@@ -11,10 +11,13 @@ import (
 
 func (s *serve) configureWishlistsServiceEndpoints() {
 
-	endpointPath := fmt.Sprintf("%s%s", apiversion, wishListsEndpointPath)
-	method := http.MethodPost
-	s.router.HandleFunc(endpointPath, s.manageCreateWishlistsRequest).
-		Methods(method)
+	createWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListsEndpointPath)
+	s.router.HandleFunc(createWishlistEndpointPath, s.manageCreateWishlistsRequest).
+		Methods(http.MethodPost)
+
+	listWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListsEndpointPath)
+	s.router.HandleFunc(listWishlistEndpointPath, s.manageListWishlistsRequest).
+		Methods(http.MethodGet)
 }
 
 func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Request) {
@@ -35,4 +38,18 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 
 	json.NewEncoder(w).Encode(model)
+}
+
+func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Request) {
+
+	userid := mux.Vars(r)["user"]
+	list, err := s.wishlistLogic.List(userid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error())
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json;charset=utf-8")
+
+	json.NewEncoder(w).Encode(list)
 }
