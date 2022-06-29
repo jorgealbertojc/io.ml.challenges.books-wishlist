@@ -1,5 +1,11 @@
 package models
 
 type Signin struct {
-	Token string `json:"token"`
+	ID   string      `json:"_id,omitempty"`
+	Spec *SigninSpec `json:"spec,omitempty"`
+}
+
+type SigninSpec struct {
+	UserID    string `json:"user,omitempty"`
+	TokenHash string `json:"token,omitempty"`
 }
