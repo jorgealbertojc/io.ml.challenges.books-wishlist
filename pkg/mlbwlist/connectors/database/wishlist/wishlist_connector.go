@@ -3,25 +3,28 @@ package wishlist
 import (
 	"database/sql"
 
+	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/commons/logging"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
 type Connector interface {
-	Insert(userid string, wishlistModel models.Wishlist) error
+	Insert(wishlistModel models.Wishlist) error
 	Select(userid string, wishlistid string) (*models.Wishlist, error)
 	List(userid string) (*models.WishlistList, error)
 }
 
 type connector struct {
-	config *models.Config
+	config  *models.Config
+	logging logging.Logging
 
 	db *sql.DB
 }
 
-func New(config *models.Config, database *sql.DB) Connector {
+func New(config *models.Config, logging logging.Logging, database *sql.DB) Connector {
 
 	return &connector{
-		config: config,
-		db:     database,
+		config:  config,
+		logging: logging,
+		db:      database,
 	}
 }
