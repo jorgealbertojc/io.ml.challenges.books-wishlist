@@ -9,5 +9,10 @@ func (l *logic) Create(wishlistModel models.Wishlist) (*models.Wishlist, error) 
 
 	wishlistModel.ID = uuid.New().String()
 
+	err := l.db.Insert(wishlistModel)
+	if err != nil {
+		return nil, err
+	}
+
 	return &wishlistModel, nil
 }

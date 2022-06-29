@@ -15,6 +15,10 @@ func (s *serve) configureWishlistsServiceEndpoints() {
 	s.router.HandleFunc(createWishlistEndpointPath, s.manageCreateWishlistsRequest).
 		Methods(http.MethodPost)
 
+	readWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListEndpointPath)
+	s.router.HandleFunc(readWishlistEndpointPath, s.manageReadWishlistRequest).
+		Methods(http.MethodGet)
+
 	listWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListsEndpointPath)
 	s.router.HandleFunc(listWishlistEndpointPath, s.manageListWishlistsRequest).
 		Methods(http.MethodGet)
@@ -36,6 +40,20 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 	}
 
 	s.httpJsonResponseManagement(w, model, http.StatusOK)
+}
+
+func (s *serve) manageReadWishlistRequest(w http.ResponseWriter, r *http.Request) {
+
+	muxvars := mux.Vars(r)
+	userid := muxvars["user"]
+	wishlistid := muxvars["wishlist"]
+	item, err := s.wishlistLogic.Read(userid, wishlistid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error())
+		return
+	}
+
+	s.httpJsonResponseManagement(w, item, http.StatusOK)
 }
 
 func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Request) {

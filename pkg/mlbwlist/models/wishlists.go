@@ -12,5 +12,5 @@ type WishlistSpec struct {
 }
 
 type WishlistList struct {
-	Items []WishlistList `json:"items"`
+	Items []Wishlist `json:"items"`
 }
