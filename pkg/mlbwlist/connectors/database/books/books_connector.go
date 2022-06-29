@@ -3,25 +3,32 @@ package books
 import (
 	"database/sql"
 
+	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/commons/logging"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
 type Connector interface {
-	Insert(userid string, wishlistid string, book models.Books) error
-	Select(userid string, wishlistid string, bookid string) (*models.Books, error)
-	List(userid string, wishlistid string) (*models.BooksList, error)
+	Insert(book models.Book) error
+	Select(userid string, wishlistid string, bookid string) (*models.Book, error)
+	List(userid string, wishlist string) (*models.BookList, error)
 }
 
 type connector struct {
-	config *models.Config
+	config  *models.Config
+	logging logging.Logging
 
-	db *sql.DB
+	db        *sql.DB
+	tablename string
 }
 
-func New(config *models.Config, database *sql.DB) Connector {
+func New(config *models.Config, logging logging.Logging, database *sql.DB) Connector {
+
+	tablename := "bw_wishlist_books"
 
 	return &connector{
-		config: config,
-		db:     database,
+		config:    config,
+		logging:   logging,
+		db:        database,
+		tablename: tablename,
 	}
 }

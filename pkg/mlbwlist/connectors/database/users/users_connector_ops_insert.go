@@ -8,7 +8,9 @@ import (
 
 func (c *connector) Insert(userAccountModel models.UserAccount) error {
 
-	sql := fmt.Sprintf("INSERT INTO user_accounts(_id, created_at, spec_username, spec_password) VALUES('%s', %d, '%s', '%s')", userAccountModel.ID, userAccountModel.CreatedAt, userAccountModel.Spec.Username, userAccountModel.Spec.Password)
+	sql := fmt.Sprintf("INSERT INTO %s(_id, spec_username, spec_password) VALUES('%s', '%s', '%s')",
+		c.tablename,
+		userAccountModel.ID, userAccountModel.Spec.Username, userAccountModel.Spec.Password)
 	c.logging.Info(sql)
 	_, err := c.db.Exec(sql)
 	if err != nil {
