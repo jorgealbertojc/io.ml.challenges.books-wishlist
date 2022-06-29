@@ -5,15 +5,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
 func (s *serve) configureUsersServiceEndpoints() {
 
-	endpointPath := fmt.Sprintf("%s%s", apiversion, userAccountsEndpointPath)
-	method := http.MethodPost
-	s.router.HandleFunc(endpointPath, s.manageCreateUserAccountRequest).
-		Methods(method)
+	createUserAccountEndpointPath := fmt.Sprintf("%s%s", apiversion, userAccountsEndpointPath)
+	s.router.HandleFunc(createUserAccountEndpointPath, s.manageCreateUserAccountRequest).
+		Methods(http.MethodPost)
+
+	readUserAccountEndpointPath := fmt.Sprintf("%s%s", apiversion, userAccountEndpointPath)
+	s.router.HandleFunc(readUserAccountEndpointPath, s.manageReadUserAccountRequest).
+		Methods(http.MethodGet)
 }
 
 func (s *serve) manageCreateUserAccountRequest(w http.ResponseWriter, r *http.Request) {
@@ -21,6 +25,18 @@ func (s *serve) manageCreateUserAccountRequest(w http.ResponseWriter, r *http.Re
 	userAccountModel := models.UserAccount{}
 	json.NewDecoder(r.Body).Decode(&userAccountModel)
 	model, err := s.userLogic.Create(userAccountModel)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error())
+		return
+	}
+
+	s.httpJsonResponseManagement(w, model, http.StatusOK)
+}
+
+func (s *serve) manageReadUserAccountRequest(w http.ResponseWriter, r *http.Request) {
+
+	userid := mux.Vars(r)["user"]
+	model, err := s.userLogic.Read(userid)
 	if err != nil {
 		s.httpServiceErrorManagement(w, err.Error())
 		return

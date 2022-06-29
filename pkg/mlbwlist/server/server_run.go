@@ -14,6 +14,7 @@ import (
 	signinconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/signin"
 	usersconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/users"
 	wishlistconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/database/wishlist"
+	searchconnector "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/connectors/google/books/search"
 	bookslogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/books"
 	searchlogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/search"
 	signinlogic "io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/logic/signin"
@@ -40,10 +41,11 @@ type serve struct {
 	booksLogic    bookslogic.Logic
 	searchLogic   searchlogic.Logic
 
-	userDB     usersconnector.Connector
-	signinDB   signinconnector.Connector
-	wishlistDB wishlistconnector.Connector
-	booksDB    booksconnector.Connector
+	userConnector     usersconnector.Connector
+	signinConnector   signinconnector.Connector
+	wishlistConnector wishlistconnector.Connector
+	booksConnector    booksconnector.Connector
+	searchConnector   searchconnector.Connector
 }
 
 func New(config *models.Config) Server {
@@ -72,8 +74,8 @@ func New(config *models.Config) Server {
 func (s *serve) Configure() error {
 
 	s.setupDefaultErrorHandlers()
-	s.configureServiceLogistics()
 	s.configureServiceDBConnectors()
+	s.configureServiceLogistics()
 	s.configureServiceEndpoints()
 
 	s.printServiceEndpoints()
@@ -90,7 +92,7 @@ func (s *serve) Run() error {
 
 func (s *serve) configureServiceLogistics() {
 
-	s.userLogic = userslogic.New(s.config, s.logging, s.db)
+	s.userLogic = userslogic.New(s.config, s.logging, s.userConnector)
 	s.signinLogic = signinlogic.New(s.config, s.logging, s.db)
 	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.db)
 	s.booksLogic = bookslogic.New(s.config, s.logging, s.db)
@@ -99,8 +101,9 @@ func (s *serve) configureServiceLogistics() {
 
 func (s *serve) configureServiceDBConnectors() {
 
-	s.userDB = usersconnector.New(s.config, s.db)
-	s.signinDB = signinconnector.New(s.config, s.db)
-	s.wishlistDB = wishlistconnector.New(s.config, s.db)
-	s.booksDB = booksconnector.New(s.config, s.db)
+	s.userConnector = usersconnector.New(s.config, s.logging, s.db)
+	s.signinConnector = signinconnector.New(s.config, s.db)
+	s.wishlistConnector = wishlistconnector.New(s.config, s.db)
+	s.booksConnector = booksconnector.New(s.config, s.db)
+	s.searchConnector = searchconnector.New(s.config)
 }
