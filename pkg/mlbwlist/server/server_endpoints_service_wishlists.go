@@ -35,10 +35,16 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 	userid := mux.Vars(r)["user"]
 	wishlistModel := models.Wishlist{}
 	json.NewDecoder(r.Body).Decode(&wishlistModel)
+
+	if wishlistModel.Meta == nil {
+		wishlistModel.Meta = &models.WishlistMeta{}
+	}
+	wishlistModel.Meta.UserID = userid
+
 	if wishlistModel.Spec == nil {
 		wishlistModel.Spec = &models.WishlistSpec{}
 	}
-	wishlistModel.Spec.User = userid
+
 	model, err := s.wishlistLogic.Create(wishlistModel)
 	if err != nil {
 		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)

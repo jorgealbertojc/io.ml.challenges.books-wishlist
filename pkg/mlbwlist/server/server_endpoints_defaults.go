@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gorilla/mux"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
@@ -63,7 +64,9 @@ func (s *serve) validateSigninAuthToken(w http.ResponseWriter, r *http.Request) 
 		token = auth[1]
 	}
 
-	err := s.signinConnector.TokenExists(token)
+	userid := mux.Vars(r)["user"]
+
+	_, err := s.signinConnector.Select(userid, token)
 	if err != nil {
 		s.logging.Error(err.Error())
 		w.Header().Set("Content-Type", "application/json;charset=utf-8")
