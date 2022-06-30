@@ -17,9 +17,9 @@ func (s *serve) manageExecuteSearchBookEndpointRequest(w http.ResponseWriter, r 
 	arguments := r.URL.Query()
 	result, err := s.searchLogic.Find(arguments)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, result, http.StatusOK)
+	s.httpJsonResponseManagement(w, result)
 }

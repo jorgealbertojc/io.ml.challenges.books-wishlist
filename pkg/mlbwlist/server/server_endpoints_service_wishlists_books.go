@@ -26,6 +26,12 @@ func (s *serve) configureBooksServiceEndpoints() {
 
 func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
 
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
 	wishlistid := muxvars["wishlist"]
@@ -41,28 +47,40 @@ func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.R
 	bookModel.Meta.WishlistID = wishlistid
 	model, err := s.booksLogic.Create(bookModel)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model, http.StatusOK)
+	s.httpJsonResponseManagement(w, model)
 }
 
 func (s *serve) manageListWishlistBooksRequest(w http.ResponseWriter, r *http.Request) {
+
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
 	wishlistid := muxvars["wishlist"]
 	list, err := s.booksLogic.List(userid, wishlistid)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, list, http.StatusOK)
+	s.httpJsonResponseManagement(w, list)
 }
 
 func (s *serve) manageReadWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
+
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
@@ -70,9 +88,9 @@ func (s *serve) manageReadWishlistBookRequest(w http.ResponseWriter, r *http.Req
 	bookid := muxvars["book"]
 	book, err := s.booksLogic.Read(userid, wishlistid, bookid)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, book, http.StatusOK)
+	s.httpJsonResponseManagement(w, book)
 }

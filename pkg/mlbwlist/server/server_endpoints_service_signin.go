@@ -22,9 +22,9 @@ func (s *serve) manageCreateSigninTokenRequest(w http.ResponseWriter, r *http.Re
 	json.NewDecoder(r.Body).Decode(&userAccountModel)
 	model, err := s.signinLogic.Create(userAccountModel)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model, http.StatusOK)
+	s.httpJsonResponseManagement(w, model)
 }
