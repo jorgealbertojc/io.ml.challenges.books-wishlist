@@ -10,7 +10,9 @@ import (
 type Connector interface {
 	Insert(wishlistModel models.Wishlist) error
 	Select(userid string, wishlistid string) (*models.Wishlist, error)
+	SelectByName(userid string, wishlistname string) (*models.Wishlist, error)
 	List(userid string) (*models.WishlistList, error)
+	Delete(userid string, wishlistid string) error
 }
 
 type connector struct {

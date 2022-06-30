@@ -26,5 +26,5 @@ func (s *serve) manageCreateSigninTokenRequest(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model)
+	s.httpJsonResponseManagement(w, model, http.StatusCreated)
 }

@@ -30,7 +30,7 @@ func (s *serve) manageCreateUserAccountRequest(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model)
+	s.httpJsonResponseManagement(w, model, http.StatusCreated)
 }
 
 func (s *serve) manageReadUserAccountRequest(w http.ResponseWriter, r *http.Request) {
@@ -48,5 +48,5 @@ func (s *serve) manageReadUserAccountRequest(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model)
+	s.httpJsonResponseManagement(w, model, http.StatusOK)
 }

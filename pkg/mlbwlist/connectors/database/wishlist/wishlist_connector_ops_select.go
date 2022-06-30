@@ -10,9 +10,26 @@ func (c *connector) Select(userid string, wishlistid string) (*models.Wishlist, 
 
 	bwWishlist := BWWishlist{}
 
-	sql := fmt.Sprintf("SELECT _id, meta_user_id, spec_name, spec_description FROM %s WHERE _id = '%s' AND meta_user_id = '%s'",
+	sql := fmt.Sprintf("SELECT _id, meta_user_id, spec_name, spec_description FROM %s WHERE meta_user_id = '%s' AND _id = '%s'",
 		c.tablename,
-		wishlistid, userid)
+		userid, wishlistid)
+	c.logging.Info(sql)
+	err := c.db.QueryRow(sql).
+		Scan(&bwWishlist.ID, &bwWishlist.MetaUserID, &bwWishlist.SpecName, &bwWishlist.SpecDescription)
+	if err != nil {
+		return nil, err
+	}
+
+	return fromWishlistDbModelToWishlistModel(bwWishlist), nil
+}
+
+func (c *connector) SelectByName(userid string, wishlistname string) (*models.Wishlist, error) {
+
+	bwWishlist := BWWishlist{}
+
+	sql := fmt.Sprintf("SELECT _id, meta_user_id, spec_name, spec_description FROM %s WHERE meta_user_id = '%s' AND spec_name = '%s'",
+		c.tablename,
+		userid, wishlistname)
 	c.logging.Info(sql)
 	err := c.db.QueryRow(sql).
 		Scan(&bwWishlist.ID, &bwWishlist.MetaUserID, &bwWishlist.SpecName, &bwWishlist.SpecDescription)

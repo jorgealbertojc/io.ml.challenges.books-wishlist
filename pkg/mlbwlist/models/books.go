@@ -19,5 +19,5 @@ type BookSpec struct {
 }
 
 type BookList struct {
-	Items []Book `json:"items,omitempty"`
+	Items []Book `json:"items"`
 }

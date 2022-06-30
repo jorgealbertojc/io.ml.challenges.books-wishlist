@@ -22,6 +22,10 @@ func (s *serve) configureWishlistsServiceEndpoints() {
 	listWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListsEndpointPath)
 	s.router.HandleFunc(listWishlistEndpointPath, s.manageListWishlistsRequest).
 		Methods(http.MethodGet)
+
+	deleteWishlistEndpointPath := fmt.Sprintf("%s%s", apiversion, wishListEndpointPath)
+	s.router.HandleFunc(deleteWishlistEndpointPath, s.manageDeleteWishlistRequest).
+		Methods(http.MethodDelete)
 }
 
 func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +55,7 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model)
+	s.httpJsonResponseManagement(w, model, http.StatusCreated)
 }
 
 func (s *serve) manageReadWishlistRequest(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +75,7 @@ func (s *serve) manageReadWishlistRequest(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	s.httpJsonResponseManagement(w, item)
+	s.httpJsonResponseManagement(w, item, http.StatusOK)
 }
 
 func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Request) {
@@ -89,5 +93,24 @@ func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	s.httpJsonResponseManagement(w, list)
+	s.httpJsonResponseManagement(w, list, http.StatusOK)
+}
+
+func (s *serve) manageDeleteWishlistRequest(w http.ResponseWriter, r *http.Request) {
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	muxvars := mux.Vars(r)
+	userid := muxvars["user"]
+	wishlistid := muxvars["wishlist"]
+	err = s.wishlistLogic.Delete(userid, wishlistid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.httpJsonResponseManagement(w, nil, http.StatusNoContent)
 }

@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/gorilla/mux"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
@@ -46,34 +44,12 @@ func (s *serve) httpServiceErrorManagement(w http.ResponseWriter, message string
 	json.NewEncoder(w).Encode(errors)
 }
 
-func (s *serve) httpJsonResponseManagement(w http.ResponseWriter, model interface{}) {
+func (s *serve) httpJsonResponseManagement(w http.ResponseWriter, model interface{}, httpstatus int) {
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(httpstatus)
 
-	json.NewEncoder(w).Encode(model)
-}
-
-func (s *serve) validateSigninAuthToken(w http.ResponseWriter, r *http.Request) error {
-
-	authorization := r.Header.Get("Authorization")
-	s.logging.Info("token: %s", authorization)
-	auth := strings.Split(authorization, " ")
-	token := ""
-	if len(auth) == 2 {
-		token = auth[1]
+	if model != nil {
+		json.NewEncoder(w).Encode(model)
 	}
-
-	userid := mux.Vars(r)["user"]
-
-	_, err := s.signinConnector.Select(userid, token)
-	if err != nil {
-		s.logging.Error(err.Error())
-		w.Header().Set("Content-Type", "application/json;charset=utf-8")
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Println(r.Response)
-		return fmt.Errorf("you are not authorized to execute actions over endpoint {%s}, verify that your token is not expired already", r.URL.Path)
-	}
-
-	return nil
 }

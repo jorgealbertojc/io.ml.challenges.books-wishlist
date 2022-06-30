@@ -8,33 +8,35 @@ import (
 
 func (l *logic) Find(queryargs map[string][]string) (*models.BookList, error) {
 
-	bookList := models.BookList{Items: []models.Book{}}
+	if len(queryargs) == 0 {
+		return nil, fmt.Errorf("this action cannot be performed without query string arguments, allowed query string arguments 'q', 'title', 'author' or 'publisher'")
+	}
+
 	queryparams := map[string]string{}
 	q, exists := queryargs["q"]
 	if exists {
 		queryparams["q"] = q[0]
 	}
 
-	if len(queryparams["q"]) == 0 {
-		return nil, fmt.Errorf("cannot execute search without ")
+	intitle, exists := queryargs["title"]
+	if exists {
+		queryparams["intitle"] = intitle[0]
 	}
 
-	searchResultList, err := l.searchConnector.Find(queryparams)
+	inauthor, exists := queryargs["author"]
+	if exists {
+		queryparams["inauthor"] = inauthor[0]
+	}
+
+	inpublisher, exists := queryargs["publisher"]
+	if exists {
+		queryparams["inpublisher"] = inpublisher[0]
+	}
+
+	bookListModel, err := l.searchConnector.Find(queryparams)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, book := range searchResultList.Items {
-
-		bookItem := models.Book{}
-		bookItem.Meta = &models.BookMeta{}
-		bookItem.Meta.GoogleID = book.ID
-		bookItem.Spec = &models.BookSpec{}
-		bookItem.Spec.Title = book.VolumeInfo.Title
-		bookItem.Spec.Publisher = book.VolumeInfo.Publisher
-		bookItem.Spec.Authors = book.VolumeInfo.Authors
-		bookList.Items = append(bookList.Items, bookItem)
-	}
-
-	return &bookList, nil
+	return bookListModel, nil
 }

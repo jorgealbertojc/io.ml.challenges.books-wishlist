@@ -10,7 +10,9 @@ import (
 type Connector interface {
 	Insert(book models.Book) error
 	Select(userid string, wishlistid string, bookid string) (*models.Book, error)
+	SelectByGID(userid string, wishlistid string, gid string) (*models.Book, error)
 	List(userid string, wishlist string) (*models.BookList, error)
+	Delete(userid string, wishlistid string, bookid string) error
 }
 
 type connector struct {

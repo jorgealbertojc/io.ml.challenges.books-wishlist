@@ -7,8 +7,8 @@ import (
 )
 
 type Connector interface {
-	Find(searchTerms map[string]string) (*models.SearchResultList, error)
-	Read(gbookid string) (*models.SearchResult, error)
+	Find(searchTerms map[string]string) (*models.BookList, error)
+	Read(gbookid string) (*models.Book, error)
 }
 
 type connector struct {
