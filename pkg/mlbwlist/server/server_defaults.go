@@ -36,6 +36,9 @@ func (s *serve) httpServiceErrorManagement(w http.ResponseWriter, message string
 		Type:   "Error",
 		Reason: message,
 	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+
 	s.logging.Error(message)
 	json.NewEncoder(w).Encode(errors)
 }

@@ -19,3 +19,19 @@ func (c *connector) Select(userid string) (*models.UserAccount, error) {
 
 	return fromUserAccountToUserAccountModel(userAccount), nil
 }
+
+func (c *connector) SelectByUsername(username string) (*models.UserAccount, error) {
+
+	bwUserAccount := BWUserAccount{}
+	sql := fmt.Sprintf("SELECT _id, spec_username, spec_password FROM %s WHERE spec_username = '%s'",
+		c.tablename,
+		username)
+	c.logging.Info(sql)
+	err := c.db.QueryRow(sql).
+		Scan(&bwUserAccount.ID, &bwUserAccount.SpecUsername, &bwUserAccount.SpecPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	return fromUserAccountToUserAccountModel(bwUserAccount), nil
+}

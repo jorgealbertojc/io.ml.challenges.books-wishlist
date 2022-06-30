@@ -1,18 +1,25 @@
 package users
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"io.ml.challenges/io.ml.challenges.books-wishlist/pkg/mlbwlist/models"
 )
 
-func (l *logic) Create(user models.UserAccount) (*models.UserAccount, error) {
+func (l *logic) Create(userAccountModel models.UserAccount) (*models.UserAccount, error) {
 
-	user.ID = uuid.New().String()
+	userAccountModel.ID = uuid.New().String()
 
-	err := l.db.Insert(user)
+	storedUserAccount, _ := l.db.SelectByUsername(userAccountModel.Spec.Username)
+	if storedUserAccount != nil && storedUserAccount.Spec.Username == userAccountModel.Spec.Username {
+		return nil, fmt.Errorf("user account username {%s} already exists in records", userAccountModel.Spec.Username)
+	}
+
+	err := l.db.Insert(userAccountModel)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return &userAccountModel, nil
 }
