@@ -26,21 +26,27 @@ func (s *serve) manageCreateUserAccountRequest(w http.ResponseWriter, r *http.Re
 	json.NewDecoder(r.Body).Decode(&userAccountModel)
 	model, err := s.userLogic.Create(userAccountModel)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model, http.StatusOK)
+	s.httpJsonResponseManagement(w, model)
 }
 
 func (s *serve) manageReadUserAccountRequest(w http.ResponseWriter, r *http.Request) {
 
-	userid := mux.Vars(r)["user"]
-	model, err := s.userLogic.Read(userid)
+	err := s.validateSigninAuthToken(w, r)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model, http.StatusOK)
+	userid := mux.Vars(r)["user"]
+	model, err := s.userLogic.Read(userid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.httpJsonResponseManagement(w, model)
 }

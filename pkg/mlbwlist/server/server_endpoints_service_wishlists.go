@@ -26,6 +26,12 @@ func (s *serve) configureWishlistsServiceEndpoints() {
 
 func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Request) {
 
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	userid := mux.Vars(r)["user"]
 	wishlistModel := models.Wishlist{}
 	json.NewDecoder(r.Body).Decode(&wishlistModel)
@@ -35,35 +41,47 @@ func (s *serve) manageCreateWishlistsRequest(w http.ResponseWriter, r *http.Requ
 	wishlistModel.Spec.User = userid
 	model, err := s.wishlistLogic.Create(wishlistModel)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model, http.StatusOK)
+	s.httpJsonResponseManagement(w, model)
 }
 
 func (s *serve) manageReadWishlistRequest(w http.ResponseWriter, r *http.Request) {
+
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
 	wishlistid := muxvars["wishlist"]
 	item, err := s.wishlistLogic.Read(userid, wishlistid)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, item, http.StatusOK)
+	s.httpJsonResponseManagement(w, item)
 }
 
 func (s *serve) manageListWishlistsRequest(w http.ResponseWriter, r *http.Request) {
 
-	userid := mux.Vars(r)["user"]
-	list, err := s.wishlistLogic.List(userid)
+	err := s.validateSigninAuthToken(w, r)
 	if err != nil {
-		s.httpServiceErrorManagement(w, err.Error())
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	s.httpJsonResponseManagement(w, list, http.StatusOK)
+	userid := mux.Vars(r)["user"]
+	list, err := s.wishlistLogic.List(userid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.httpJsonResponseManagement(w, list)
 }

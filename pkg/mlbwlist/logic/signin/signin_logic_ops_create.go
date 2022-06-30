@@ -1,7 +1,6 @@
 package signin
 
 import (
-	"crypto/md5"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -10,20 +9,30 @@ import (
 
 func (l *logic) Create(userAccountModel models.UserAccount) (*models.Signin, error) {
 
-	signin := models.Signin{
-		ID: uuid.New().String(),
-		Meta: &models.SigninMeta{
-			UserID: userAccountModel.ID,
-		},
-		Spec: &models.SigninSpec{
-			TokenHash: fmt.Sprintf("%x", md5.Sum([]byte("example-token"))),
-		},
+	storedUserAccountModel, _ := l.userdb.SelectByUsername(userAccountModel.Spec.Username)
+	if storedUserAccountModel == nil {
+		return nil, fmt.Errorf("user account {%s} was not found in our records", userAccountModel.Spec.Username)
 	}
 
-	err := l.db.Insert(signin)
+	signinToken, err := l.buildSigninAuthenticationToken()
 	if err != nil {
 		return nil, err
 	}
 
-	return &signin, nil
+	signinModel := models.Signin{
+		ID: uuid.New().String(),
+		Meta: &models.SigninMeta{
+			UserID: storedUserAccountModel.ID,
+		},
+		Spec: &models.SigninSpec{
+			TokenHash: signinToken,
+		},
+	}
+
+	err = l.db.Insert(signinModel)
+	if err != nil {
+		return nil, err
+	}
+
+	return &signinModel, nil
 }
