@@ -94,7 +94,7 @@ func (s *serve) configureServiceLogistics() {
 
 	s.userLogic = userslogic.New(s.config, s.logging, s.userConnector)
 	s.signinLogic = signinlogic.New(s.config, s.logging, s.signinConnector, s.userConnector)
-	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.wishlistConnector)
+	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.wishlistConnector, s.userConnector)
 	s.booksLogic = bookslogic.New(s.config, s.logging, s.booksConnector, s.searchConnector)
 	s.searchLogic = searchlogic.New(s.config, s.logging, s.searchConnector)
 }

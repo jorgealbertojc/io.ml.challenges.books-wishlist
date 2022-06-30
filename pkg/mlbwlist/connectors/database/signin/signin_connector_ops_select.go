@@ -10,7 +10,7 @@ func (c *connector) Select(userid string, token string) (*models.Signin, error) 
 
 	bwUserAccountSigninToken := BWUserAccountSigninToken{}
 
-	sql := fmt.Sprintf("SELECT _id, spec_user_id, spec_token_hash FROM %s WHERE spec_user_id = '%s' AND spec_token_hash = '%s'",
+	sql := fmt.Sprintf("SELECT _id, meta_user_id, spec_token_hash FROM %s WHERE meta_user_id = '%s' AND spec_token_hash = '%s'",
 		c.tablename,
 		userid, token)
 	c.logging.Info(sql)

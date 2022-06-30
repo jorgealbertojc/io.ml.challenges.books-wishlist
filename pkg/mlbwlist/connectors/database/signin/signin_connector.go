@@ -10,7 +10,6 @@ import (
 type Connector interface {
 	Insert(signinModel models.Signin) error
 	Select(userid string, token string) (*models.Signin, error)
-	TokenExists(token string) error
 }
 
 type connector struct {
