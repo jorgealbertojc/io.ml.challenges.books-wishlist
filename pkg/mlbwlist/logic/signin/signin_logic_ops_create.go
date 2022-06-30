@@ -12,8 +12,10 @@ func (l *logic) Create(userAccountModel models.UserAccount) (*models.Signin, err
 
 	signin := models.Signin{
 		ID: uuid.New().String(),
+		Meta: &models.SigninMeta{
+			UserID: userAccountModel.ID,
+		},
 		Spec: &models.SigninSpec{
-			UserID:    userAccountModel.ID,
 			TokenHash: fmt.Sprintf("%x", md5.Sum([]byte("example-token"))),
 		},
 	}

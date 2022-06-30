@@ -1,9 +1,8 @@
 package models
 
 type UserAccount struct {
-	ID        string           `json:"_id,omitempty" sql:"_id"`
-	CreatedAt int              `json:"created_at,omitempty" sql:"created_at"`
-	Spec      *UserAccountSpec `json:"spec,omitempty"`
+	ID   string           `json:"_id,omitempty" sql:"_id"`
+	Spec *UserAccountSpec `json:"spec,omitempty"`
 }
 
 type UserAccountSpec struct {

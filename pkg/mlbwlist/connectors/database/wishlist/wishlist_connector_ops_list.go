@@ -10,7 +10,9 @@ func (c *connector) List(userid string) (*models.WishlistList, error) {
 
 	wishlistList := models.WishlistList{Items: []models.Wishlist{}}
 
-	sql := fmt.Sprintf("SELECT _id, spec_user_id, spec_name, spec_description FROM books_wishlists WHERE spec_user_id = '%s'", userid)
+	sql := fmt.Sprintf("SELECT _id, meta_user_id, spec_name, spec_description FROM %s WHERE meta_user_id = '%s'",
+		c.tablename,
+		userid)
 	c.logging.Info(sql)
 	rows, err := c.db.Query(sql)
 	if err != nil {
@@ -18,12 +20,12 @@ func (c *connector) List(userid string) (*models.WishlistList, error) {
 	}
 
 	for rows.Next() {
-		wlistDbModel := WishListDBModel{}
-		err := rows.Scan(&wlistDbModel.ID, &wlistDbModel.SpecUserID, &wlistDbModel.SpecName, &wlistDbModel.SpecDescription)
+		wbWishlist := BWWishlist{}
+		err := rows.Scan(&wbWishlist.ID, &wbWishlist.MetaUserID, &wbWishlist.SpecName, &wbWishlist.SpecDescription)
 		if err != nil {
 			return nil, err
 		}
-		wishlistList.Items = append(wishlistList.Items, *fromWishlistDbModelToWishlistModel(wlistDbModel))
+		wishlistList.Items = append(wishlistList.Items, *fromWishlistDbModelToWishlistModel(wbWishlist))
 	}
 
 	return &wishlistList, nil

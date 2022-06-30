@@ -29,9 +29,17 @@ func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.R
 	muxvars := mux.Vars(r)
 	userid := muxvars["user"]
 	wishlistid := muxvars["wishlist"]
-	bookModel := models.Books{}
+	bookModel := models.Book{}
 	json.NewDecoder(r.Body).Decode(&bookModel)
-	model, err := s.booksLogic.Create(userid, wishlistid, bookModel)
+	if bookModel.Meta == nil {
+		bookModel.Meta = &models.BookMeta{}
+	}
+	if bookModel.Spec == nil {
+		bookModel.Spec = &models.BookSpec{}
+	}
+	bookModel.Meta.UserID = userid
+	bookModel.Meta.WishlistID = wishlistid
+	model, err := s.booksLogic.Create(bookModel)
 	if err != nil {
 		s.httpServiceErrorManagement(w, err.Error())
 		return

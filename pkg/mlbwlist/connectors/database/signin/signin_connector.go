@@ -17,13 +17,18 @@ type connector struct {
 	logging logging.Logging
 
 	db *sql.DB
+
+	tablename string
 }
 
 func New(config *models.Config, logging logging.Logging, database *sql.DB) Connector {
 
+	tablename := "bw_user_signin_tokens"
+
 	return &connector{
-		config:  config,
-		db:      database,
-		logging: logging,
+		config:    config,
+		db:        database,
+		logging:   logging,
+		tablename: tablename,
 	}
 }

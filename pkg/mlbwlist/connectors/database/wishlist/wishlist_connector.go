@@ -18,13 +18,19 @@ type connector struct {
 	logging logging.Logging
 
 	db *sql.DB
+
+	tablename string
 }
 
 func New(config *models.Config, logging logging.Logging, database *sql.DB) Connector {
+
+	tablename := "bw_wishlists"
 
 	return &connector{
 		config:  config,
 		logging: logging,
 		db:      database,
+
+		tablename: tablename,
 	}
 }

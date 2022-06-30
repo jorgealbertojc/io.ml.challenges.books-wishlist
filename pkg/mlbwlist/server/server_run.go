@@ -95,8 +95,8 @@ func (s *serve) configureServiceLogistics() {
 	s.userLogic = userslogic.New(s.config, s.logging, s.userConnector)
 	s.signinLogic = signinlogic.New(s.config, s.logging, s.signinConnector, s.userConnector)
 	s.wishlistLogic = wishlistlogic.New(s.config, s.logging, s.wishlistConnector)
-	s.booksLogic = bookslogic.New(s.config, s.logging, s.db)
-	s.searchLogic = searchlogic.New(s.config, s.logging)
+	s.booksLogic = bookslogic.New(s.config, s.logging, s.booksConnector, s.searchConnector)
+	s.searchLogic = searchlogic.New(s.config, s.logging, s.searchConnector)
 }
 
 func (s *serve) configureServiceDBConnectors() {
@@ -104,6 +104,6 @@ func (s *serve) configureServiceDBConnectors() {
 	s.userConnector = usersconnector.New(s.config, s.logging, s.db)
 	s.signinConnector = signinconnector.New(s.config, s.logging, s.db)
 	s.wishlistConnector = wishlistconnector.New(s.config, s.logging, s.db)
-	s.booksConnector = booksconnector.New(s.config, s.db)
-	s.searchConnector = searchconnector.New(s.config)
+	s.booksConnector = booksconnector.New(s.config, s.logging, s.db)
+	s.searchConnector = searchconnector.New(s.config, s.logging)
 }
