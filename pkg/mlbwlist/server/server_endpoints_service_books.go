@@ -22,6 +22,10 @@ func (s *serve) configureBooksServiceEndpoints() {
 	readWishlistBookItemEndpointPath := fmt.Sprintf("%s%s", apiversion, bookEndpointPath)
 	s.router.HandleFunc(readWishlistBookItemEndpointPath, s.manageReadWishlistBookRequest).
 		Methods(http.MethodGet)
+
+	deleteWishlistBookItemEndpointPath := fmt.Sprintf("%s%s", apiversion, bookEndpointPath)
+	s.router.HandleFunc(deleteWishlistBookItemEndpointPath, s.manageDeleteWishlistBookRequest).
+		Methods(http.MethodDelete)
 }
 
 func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +55,7 @@ func (s *serve) manageCreateWishlistBookRequest(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	s.httpJsonResponseManagement(w, model)
+	s.httpJsonResponseManagement(w, model, http.StatusCreated)
 }
 
 func (s *serve) manageListWishlistBooksRequest(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +75,7 @@ func (s *serve) manageListWishlistBooksRequest(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	s.httpJsonResponseManagement(w, list)
+	s.httpJsonResponseManagement(w, list, http.StatusOK)
 }
 
 func (s *serve) manageReadWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
@@ -92,5 +96,26 @@ func (s *serve) manageReadWishlistBookRequest(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	s.httpJsonResponseManagement(w, book)
+	s.httpJsonResponseManagement(w, book, http.StatusOK)
+}
+
+func (s *serve) manageDeleteWishlistBookRequest(w http.ResponseWriter, r *http.Request) {
+
+	err := s.validateSigninAuthToken(w, r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	muxvars := mux.Vars(r)
+	userid := muxvars["user"]
+	wishlistid := muxvars["wishlist"]
+	bookid := muxvars["book"]
+	err = s.booksLogic.Delete(userid, wishlistid, bookid)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.httpJsonResponseManagement(w, nil, http.StatusNoContent)
 }

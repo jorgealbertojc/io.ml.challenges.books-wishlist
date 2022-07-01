@@ -14,6 +14,17 @@ func (s *serve) configureSearchBookServiceEndpoints() {
 
 func (s *serve) manageExecuteSearchBookEndpointRequest(w http.ResponseWriter, r *http.Request) {
 
+	token, err := parseBearerTokenFromRequest(r)
+	if err != nil {
+		s.httpServiceErrorManagement(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if len(token) == 0 {
+		s.httpServiceErrorManagement(w, "you are not allowed to perform search operation without authentication", http.StatusUnauthorized)
+		return
+	}
+
 	arguments := r.URL.Query()
 	result, err := s.searchLogic.Find(arguments)
 	if err != nil {
@@ -21,5 +32,5 @@ func (s *serve) manageExecuteSearchBookEndpointRequest(w http.ResponseWriter, r 
 		return
 	}
 
-	s.httpJsonResponseManagement(w, result)
+	s.httpJsonResponseManagement(w, result, http.StatusOK)
 }

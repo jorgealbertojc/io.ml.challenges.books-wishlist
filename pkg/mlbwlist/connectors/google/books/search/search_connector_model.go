@@ -1,4 +1,4 @@
-package models
+package search
 
 type SearchResultList struct {
 	Items []SearchResult `json:"items"`
