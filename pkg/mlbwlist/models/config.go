@@ -9,7 +9,6 @@ type Config struct {
 
 type ConfigApplication struct {
 	ConfigVersion string                   `mapstructure:"configversion" json:"configversion"`
-	SecretVersion string                   `mapstructure:"secretversion" json:"secretversion"`
 	AppService    ConfigApplicationService `mapstructure:"service" json:"service"`
 }
 
@@ -21,13 +20,8 @@ type ConfigApplicationService struct {
 type ConfigDatabase struct {
 	Type     string `mapstructure:"type" json:"type"`
 	Filepath string `mapstructure:"filepath" json:"filepath"`
-	Username string `mapstructure:"username" json:"-"`
-	Password string `mapstructure:"password" json:"-"`
 }
 
 type ConfigGsuite struct {
-	API      string `mapstructure:"api" json:"api"`
-	Token    string `mapstructure:"token" json:"-"`
-	Username string `mapstructure:"username" json:"-"`
-	Password string `mapstructure:"password" json:"-"`
+	API string `mapstructure:"api" json:"api"`
 }

@@ -8,3 +8,6 @@
 cmd/mlbwlist/**/*
 !cmd/mlbwlist/main.go
 !cmd/mlbwlist/mlbwlist.db
+
+# Environment Variables Files
+.env
