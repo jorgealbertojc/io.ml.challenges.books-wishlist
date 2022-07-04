@@ -19,7 +19,6 @@ const (
 	appName            = "MercadoLibre - Books Wishlist App"
 	appCLIName         = "mlbwlist"
 	configFilepathFlag = "configs"
-	secretFilepathFlag = "secrets"
 )
 
 var cmd = &cobra.Command{
@@ -33,9 +32,6 @@ func main() {
 
 	cmd.Flags().String(configFilepathFlag, fmt.Sprintf("/etc/%s/configs.yml", appCLIName), "configurations to start service and use connectors")
 	_ = viper.BindPFlag(configFilepathFlag, cmd.Flags().Lookup(configFilepathFlag))
-
-	cmd.Flags().String(secretFilepathFlag, fmt.Sprintf("/etc/%s/secrets.yml", appCLIName), "configurations to start service and use connectors")
-	_ = viper.BindPFlag(secretFilepathFlag, cmd.Flags().Lookup(secretFilepathFlag))
 
 	viper.AutomaticEnv()
 	err := cmd.Execute()
@@ -59,21 +55,6 @@ func ReadConfig() models.Config {
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Printf("ERROR: cannot read configuration file from %s\n", configfilepath)
-		os.Exit(2)
-	}
-
-	secretfilepath := viper.GetString(secretFilepathFlag)
-	secretfilename := getFilenameFromFilepath(secretfilepath)
-	secretfiledir := getFiledireFromFilepath(secretfilepath)
-
-	fmt.Printf("reading secrets file from %s\n", secretfilepath)
-
-	viper.SetConfigName(secretfilename)
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(secretfiledir)
-	err = viper.MergeInConfig()
-	if err != nil {
-		fmt.Printf("ERROR: cannot read secrets file from %s\n", secretfilepath)
 		os.Exit(2)
 	}
 

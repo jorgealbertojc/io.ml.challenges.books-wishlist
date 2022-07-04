@@ -13,11 +13,13 @@ func (l *logic) Create(userAccountModel models.UserAccount) (*models.UserAccount
 
 	storedUserAccount, _ := l.db.SelectByUsername(userAccountModel.Spec.Username)
 	if storedUserAccount != nil && storedUserAccount.Spec.Username == userAccountModel.Spec.Username {
+		l.logging.Error("seems that user %s is already registered in our records", userAccountModel.Spec.Username)
 		return nil, fmt.Errorf("user account username {%s} already exists in records", userAccountModel.Spec.Username)
 	}
 
 	err := l.db.Insert(userAccountModel)
 	if err != nil {
+		l.logging.Error("")
 		return nil, err
 	}
 
