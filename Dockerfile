@@ -28,6 +28,6 @@ RUN cd /app/src/io.ml.challenges/io.ml.challenges.books-wishlist \
     && go build -o /usr/local/bin/mlbwlistd ./cmd/mlbwlist/main.go \
     && mkdir -p /var/local/mlbwlistd \
     && sqlite3 /var/local/mlbwlistd/database.db < /app/src/io.ml.challenges/io.ml.challenges.books-wishlist/database/migrations/2022-06-29.books-wishlist.sql \
-    && rm -rfv /app/src/io.ml.challenges
+    && rm -rf /app/src/io.ml.challenges
 
 ENTRYPOINT [ "/usr/local/bin/mlbwlistd", "--configs", "/etc/mlbwlistd/configs/config.yml" ]
