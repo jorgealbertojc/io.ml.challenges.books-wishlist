@@ -1,0 +1,34 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/jorgealbertojc/io.ml.challenges.books-wishlist
+options:
+  commits:
+    filters:
+      Type:
+        - feat
+        - fix
+        - doc
+        - style
+        - refactor
+        - test
+        - chore
+  commit_groups:
+    title_maps:
+      feat: "Features"
+      fix: "Fixes"
+      doc: "Documentation"
+      style: "Reordering Code"
+      refactor: "Refactors"
+      test: "Code Testing"
+      chore: "Maintenance Activities"
+  header:
+    pattern: "^(\\w*)(?:\\( *(.*)\\))?\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Scope
+      - Subject
+  notes:
+    keywords:
+      - BREAKING CHANGE
