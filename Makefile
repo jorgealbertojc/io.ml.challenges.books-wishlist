@@ -1,5 +1,5 @@
 
-export DOCKER_IMAGE_NAME := "$(shell basename $(PWD)):v1.0.0-rc"
+export DOCKER_IMAGE_NAME := $(shell basename $(PWD)):v1.0.0-rc
 
 
 

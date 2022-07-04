@@ -25,7 +25,7 @@ func (c *connector) Find(searchTerms map[string]string) (*models.BookList, error
 		return nil, errs[0]
 	}
 
-	if response.StatusCode < 200 && response.StatusCode >= 400 {
+	if response.StatusCode < 200 || response.StatusCode >= 400 {
 		return nil, fmt.Errorf("cannot found any results, please check your connection. Error %d", response.StatusCode)
 	}
 
